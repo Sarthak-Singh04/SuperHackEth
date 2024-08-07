@@ -1,20 +1,21 @@
-// src/app/page.tsx
-
 'use client';
 
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
-export default function Home() {
-  const { login, ready, authenticated } = usePrivy();
+export default function Login() {
+  const { login, ready, authenticated, user } = usePrivy();
   const router = useRouter();
 
-  if (!ready) return <></>;
-  
-  if (ready && authenticated) {
-    router.push('/dashboard');
-    return null;
-  }
+  useEffect(() => {
+    if (ready && authenticated && user) {
+      router.push('/dashboard');
+    }
+  }, [ready, authenticated, user, router]);
+
+  if (!ready) return null;
+  if (ready && authenticated) return null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
