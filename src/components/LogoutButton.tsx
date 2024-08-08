@@ -15,7 +15,7 @@ export default function LogoutButton() {
         await logout();
         // In future we can add a call to your backend to clear any server-side session data
         // await fetch('/api/auth/logout', { method: 'POST' });
-        router.push('/login'); 
+        router.push('/'); 
       } catch (error) {
         console.error('Logout failed:', error);
       }

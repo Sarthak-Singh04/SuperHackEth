@@ -10,7 +10,7 @@ export function LoginButton() {
 
   const handleClick = async () => {
     if (authenticated) {
-      router.push('/dashboard')
+      router.push('/home')
     } else {
       login()
     }
@@ -18,7 +18,7 @@ export function LoginButton() {
 
   return (
     <button onClick={handleClick}>
-      {authenticated ? 'Go to Dashboard' : 'Login with Privy'}
+      {authenticated ? 'Go to Home' : 'Login with Privy'}
     </button>
   )
 }

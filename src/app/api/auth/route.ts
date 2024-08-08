@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/app/lib/prisma';
-import { privyServer } from '@/app/lib/privyServer';
+import prisma from '@/lib/prisma';
+import { privyServer } from '@/lib/privyServer';
 
 
 

@@ -12,12 +12,12 @@ export default function Home() {
   if (!ready) return <></>;
   
   if (ready && authenticated) {
-    router.push('/dashboard');
+    router.push('/home');
     return null;
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className="flex min-h-screen flex-col p-24">
       <h1 className="text-2xl">Privy Login</h1>
       <button className="px-4 py-2 rounded bg-blue-500 text-white" onClick={login}>
         Log in
