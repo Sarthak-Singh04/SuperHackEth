@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import dynamic from 'next/dynamic';
-import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/toaster";
+import ClientProviders from "@/lib/ClientProviders";
 
-// Dynamically import AuthProviders, with SSR disabled
-const AuthProviders = dynamic(() => import('../lib/AuthProvider'), { ssr: false });
 
 // Load Inter font with Latin subset
 const inter = Inter({ subsets: ["latin"] });
@@ -23,23 +20,14 @@ export const metadata: Metadata = {
 // RootLayout component
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProviders>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
-
-        </AuthProviders>
+        <ClientProviders>{children}</ClientProviders>
         <Toaster />
-    
       </body>
     </html>
   );

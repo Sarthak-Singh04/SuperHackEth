@@ -1,31 +1,32 @@
-"use client";
+'use client';
+
 import { usePrivy } from '@privy-io/react-auth';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { SidebarDesktop } from '@/components/Sidebar';
 
-import Navbar from '@/components/Navbar';
-import MenuBar from '@/components/Menubar';
-
-export default function Layout({
+export default function AuthenticatedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { login, authenticated, ready } = usePrivy();
+  const { ready, authenticated } = usePrivy();
+  const router = useRouter();
 
-  // Check if user is authenticated and ready
-  if (!ready || !authenticated) {
-    // If not, redirect to login page or render a login component
-    return redirect("/");
-  }
+  useEffect(() => {
+    if (ready && !authenticated) {
+      router.push('/');
+    }
+  }, [ready, authenticated, router]);
 
+  if (!ready) return <div>Loading...</div>;
+  if (!authenticated) return null; 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Navbar />
-      <div className="flex w-full max-w-7xl grow gap-5 p-5">
-        <MenuBar className="sticky  hidden h-screen flex-none space-y-3 rounded-2xl bg-card px-3 py-5 shadow-sm sm:block lg:px-5 xl:w-80 border-r"  />
+    <div>
+      <SidebarDesktop />
+      <main className='ml-[19rem] pt-4'>
         {children}
-      </div>
-      <MenuBar className="sticky bottom-0 flex w-full justify-center gap-5 border-t border-r bg-card p-3 sm:hidden" />
+      </main>
     </div>
   );
 }

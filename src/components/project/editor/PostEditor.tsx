@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from "@tiptap/extension-placeholder";
-import { submitPost } from './action';
 import { Button } from '@/components/ui/button';
 import { User } from 'lucide-react';
 import { usePrivy } from '@privy-io/react-auth';
+import { useSubmitProjectMutation } from './ProjectMutation';
+import { useToast } from '@/components/ui/use-toast';
 
-const PostEditor = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const { getAccessToken, authenticated } = usePrivy();
+const ProjectEditor = () => {
+  const { authenticated } = usePrivy();
+  const submitProjectMutation = useSubmitProjectMutation();
+  const { toast } = useToast();
 
   const editor = useEditor({
     extensions: [
@@ -21,7 +21,7 @@ const PostEditor = () => {
         italic: false,
       }),
       Placeholder.configure({
-        placeholder: "What's up on politics?",
+        placeholder: "What's your project idea?",
       }),
     ],
     content: '<p></p>',
@@ -32,20 +32,21 @@ const PostEditor = () => {
   async function onSubmit() {
     if (!input.trim() || !authenticated) return;
 
-    setIsSubmitting(true);
-    setError(null);
     try {
-      const token = await getAccessToken();
-      if (!token) {
-        throw new Error("Failed to get authentication token");
-      }
-      await submitPost(input, token);
+      await submitProjectMutation.mutateAsync(input);
       editor?.commands.clearContent();
+      toast({
+        description: "Project created successfully!",
+        duration: 3000,
+      });
     } catch (error) {
-      console.error('Failed to submit post:', error);
-      setError('Failed to submit post. Please try again.');
-    } finally {
-      setIsSubmitting(false);
+      console.error('Failed to submit project:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create project. Please try again.",
+        duration: 3000,
+      });
     }
   }
 
@@ -63,14 +64,13 @@ const PostEditor = () => {
             <EditorContent editor={editor} className="w-full min-h-[100px] p-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
         </div>
-        {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
         <div className="mt-4 flex justify-end">
           <Button
             onClick={onSubmit}
-            disabled={!input.trim() || isSubmitting || !authenticated}
+            disabled={!input.trim() || submitProjectMutation.isPending || !authenticated}
             className="px-4 py-2 bg-green-400 text-white rounded-md hover:bg-blue-700 transition duration-200"
           >
-            {isSubmitting ? 'Posting...' : 'Post'}
+            {submitProjectMutation.isPending ? 'Creating...' : 'Create Project'}
           </Button>
         </div>
       </div>
@@ -78,4 +78,4 @@ const PostEditor = () => {
   );
 }
 
-export default PostEditor;
+export default ProjectEditor;

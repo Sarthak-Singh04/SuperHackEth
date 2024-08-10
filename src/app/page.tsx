@@ -1,27 +1,13 @@
-// src/app/page.tsx
+import Link from 'next/link'
 
-'use client';
-
-import { usePrivy } from '@privy-io/react-auth';
-import { useRouter } from 'next/navigation';
-
-export default function Home() {
-  const { login, ready, authenticated } = usePrivy();
-  const router = useRouter();
-
-  if (!ready) return <></>;
-  
-  if (ready && authenticated) {
-    router.push('/home');
-    return null;
-  }
-
+export default function LandingPage() {
   return (
     <main className="flex min-h-screen flex-col p-24">
-      <h1 className="text-2xl">Privy Login</h1>
-      <button className="px-4 py-2 rounded bg-blue-500 text-white" onClick={login}>
-        Log in
-      </button>
+      <h1 className="text-2xl">Welcome to Our Platform</h1>
+      <p className="mt-4">Join us to explore amazing projects and connect with talented individuals.</p>
+      <Link href="/login" className="px-4 py-2 mt-8 rounded bg-blue-500 text-white inline-block">
+        Get Started
+      </Link>
     </main>
-  );
+  )
 }

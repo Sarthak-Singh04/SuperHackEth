@@ -2,48 +2,28 @@
 
 import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
-import { useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 
-export default function Login() {
-  const { login, ready, authenticated, user, getAccessToken } = usePrivy();
+export default function LoginPage() {
+  const { login, ready, authenticated } = usePrivy();
   const router = useRouter();
 
-  const syncUserData = useCallback(async () => {
-    try {
-      const accessToken = await getAccessToken();
-      const response = await fetch('/api/auth', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-      if (response.ok) {
-        const data = await response.json();
-      } else {
-        console.error('Failed to sync user data');
-      }
-    } catch (error) {
-      console.error('Error syncing user data:', error);
-    }
-  }, [getAccessToken, user]);
-
   useEffect(() => {
-    if (ready && authenticated && user) {
-      syncUserData().then(() => {
-        router.push('/home');
-      });
+    if (ready && authenticated) {
+      router.push('/home');
     }
-  }, [ready, authenticated, user, router, syncUserData]);
+  }, [ready, authenticated, router]);
 
-  if (!ready) return null;
-  if (ready && authenticated) return null;
+  if (!ready) return <div>Loading...</div>;
+  if (authenticated) return null;
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-2xl">Privy Login</h1>
-      <button className="px-4 py-2 rounded bg-blue-500 text-white" onClick={login}>
+      <h1 className="text-2xl mb-6">Welcome to Our App</h1>
+      <button 
+        onClick={login}
+        className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+      >
         Log in
       </button>
     </main>
