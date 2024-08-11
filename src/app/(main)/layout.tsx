@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { SidebarDesktop } from '@/components/Sidebar';
+import SkeletonLoader from '@/components/loader/SkeletonLoader';
 
 export default function AuthenticatedLayout({
   children,
@@ -19,7 +20,7 @@ export default function AuthenticatedLayout({
     }
   }, [ready, authenticated, router]);
 
-  if (!ready) return <div>Loading...</div>;
+  if (!ready) return (<SkeletonLoader/>);
   if (!authenticated) return null; 
   return (
     <div>
