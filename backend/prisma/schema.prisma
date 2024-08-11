@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  privyUserId      String    @unique
+  email            String?   @unique
+  username         String    @unique
+  role             Role      @default(USER)
+  appleEmail       String?
+  googleEmail      String?
+  twitterUsername  String?
+  walletAddress    String?
+  avatarUrl        String?
+  projects         Project[]
+  comments         Comment[]
+
+  @@index([email])
+  @@index([username])
+}
+
+model Project {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String    @db.VarChar(256)
+  content   String
+  slug      String    @unique
+  published Boolean   @default(false)
+  imageUrl  String?
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  comments  Comment[]
+
+  @@index([slug])
+  @@index([authorId])
+}
+
+model Comment {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  content   String
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  authorId  String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+  parent    Comment?  @relation("ParentChild", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  String?
+  children  Comment[] @relation("ParentChild")
+
+  @@index([authorId])
+  @@index([projectId])
+  @@index([parentId])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
